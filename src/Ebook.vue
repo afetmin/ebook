@@ -1,6 +1,7 @@
 <template>
   <div class="ebook">
-    <div class="title-wrapper">
+    <transition name="slide-down">
+    <div class="title-wrapper" v-show="menuShow">
       <div class="left">
         <span class="icon icon-back"></span>
       </div>
@@ -16,15 +17,17 @@
         </div>
       </div>
     </div>
+    </transition>
     <div class="read-wrapper">
       <div id="read"></div>
       <div class="mask">
         <div class="left" @click="prevPage"></div>
-        <div class="center"></div>
+        <div class="center" @click="toggleTitleMenu"></div>
         <div class="right" @click="nextPage"></div>
       </div>
     </div>
-    <div class="menu-wrapper">
+    <transition name="slide-up">
+    <div class="menu-wrapper" v-show="menuShow">
       <div class="icon-wrapper">
         <span class="icon icon-menu"></span>
       </div>
@@ -38,6 +41,7 @@
         <span class="icon icon-a">A</span>
       </div>
     </div>
+    </transition>
   </div>
 </template>
 
@@ -46,7 +50,15 @@ import Epub from 'epubjs'
 const EBOOK_URL = '/static/人类简史.epub'
 export default {
   name: 'ebook',
+  data() {
+    return {
+      menuShow: false
+    }
+  },
   methods: {
+    toggleTitleMenu() {
+      this.menuShow = !this.menuShow
+    },
     prevPage() {
       if (this.rendition) {
         this.rendition.prev()
