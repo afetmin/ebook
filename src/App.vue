@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <span class="icon-cart"></span>
     <router-view/>
   </div>
 </template>
