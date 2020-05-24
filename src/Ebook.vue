@@ -11,6 +11,7 @@
     </div>
     <menu-bar :menuShow="menuShow"
     ref="menuBar"
+    @setFontSize="setFontSize"
     :fontSizeList="fontSizeList"
     :defaultFontSize="defaultFontSize"
     ></menu-bar>
@@ -36,10 +37,17 @@ export default {
         { fontSize: 22 },
         { fontSize: 24 }
       ],
+      // 控制显示字体大小
       defaultFontSize: 16
     }
   },
   methods: {
+    setFontSize(fontSize) {
+      this.defaultFontSize = fontSize
+      if (this.themes) {
+        this.themes.fontSize(fontSize + 'px')
+      }
+    },
     toggleTitleMenu() {
       this.menuShow = !this.menuShow
       if (!this.menuShow) {
@@ -67,6 +75,10 @@ export default {
       })
       // 通过Rendition.display渲染电子书
       this.rendition.display()
+      // 获取theme对象
+      this.themes = this.rendition.themes
+      // 设置字体大小
+      this.setFontSize(this.defaultFontSize)
     }
   },
   mounted() {
