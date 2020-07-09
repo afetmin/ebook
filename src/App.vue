@@ -17,5 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 <style>
-
+  #app{
+    overflow: hidden;
+  }
 </style>

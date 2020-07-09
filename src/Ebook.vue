@@ -109,6 +109,7 @@ export default {
     },
     // 设置主题
     setTheme(index) {
+      // console.log(index, this.themeList[index].name)
       this.themes.select(this.themeList[index].name)
       this.defaultTheme = index
     },
