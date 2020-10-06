@@ -1,6 +1,7 @@
 # ebook
 
-> A Vue.js project
+epub+vue 在线阅读电子书
+10-6 修复了主题只能设置一次bug。
 
 ## Build Setup
 
