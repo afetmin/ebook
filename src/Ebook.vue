@@ -9,18 +9,20 @@
         <div class="right" @click="nextPage"></div>
       </div>
     </div>
-    <menu-bar :ifTitleAndMenuShow="ifTitleAndMenuShow"
-              :fontSizeList="fontSizeList"
-              :defaultFontSize="defaultFontSize"
-              @setFontSize="setFontSize"
-              :themeList="themeList"
-              :defaultTheme="defaultTheme"
-              @setTheme="setTheme"
-              :bookAvailable="bookAvailable"
-              @onProgressChange="onProgressChange"
-              :navigation="navigation"
-              @jumpTo="jumpTo"
-              ref="menuBar"></menu-bar>
+    <menu-bar
+      :ifTitleAndMenuShow="ifTitleAndMenuShow"
+      :fontSizeList="fontSizeList"
+      :defaultFontSize="defaultFontSize"
+      @setFontSize="setFontSize"
+      :themeList="themeList"
+      :defaultTheme="defaultTheme"
+      @setTheme="setTheme"
+      :bookAvailable="bookAvailable"
+      @onProgressChange="onProgressChange"
+      :navigation="navigation"
+      @jumpTo="jumpTo"
+      ref="menuBar"
+    ></menu-bar>
   </div>
 </template>
 
@@ -32,7 +34,7 @@ const DOWNLOAD_URL = '/static/人类简史.epub'
 export default {
   components: {
     TitleBar,
-    MenuBar
+    MenuBar,
   },
   data() {
     return {
@@ -44,7 +46,7 @@ export default {
         { fontSize: 18 },
         { fontSize: 20 },
         { fontSize: 22 },
-        { fontSize: 24 }
+        { fontSize: 24 },
       ],
       defaultFontSize: 16,
       themeList: [
@@ -52,40 +54,50 @@ export default {
           name: 'default',
           style: {
             body: {
-              'color': '#000', 'background': '#fff'
-            }
-          }
+              color: '#000',
+              background: '#fff',
+            },
+          },
         },
         {
           name: 'green',
           style: {
             body: {
-              'color': '#000', 'background': '#ceeaba'
-            }
-          }
+              color: '#000',
+              background: '#ceeaba',
+            },
+          },
         },
         {
           name: 'night',
           style: {
             body: {
-              'color': '#fff', 'background': '#000'
-            }
-          }
+              color: '#fff',
+              background: '#000',
+            },
+          },
         },
         {
           name: 'gold',
           style: {
             body: {
-              'color': '#000', 'background': 'rgb(241, 236, 226)'
-            }
-          }
-        }
+              color: '#000',
+              background: 'rgb(241, 236, 226)',
+            },
+          },
+        },
       ],
       defaultTheme: 0,
       // 图书是否处于可用状态
       bookAvailable: false,
-      navigation: {}
+      navigation: {},
+      themes: null,
     }
+  },
+  watch: {
+    defaultTheme(val) {
+      this.setTheme(val)
+    },
   },
   methods: {
     // 根据链接跳转到指定位置
@@ -104,18 +116,28 @@ export default {
     // progress 进度条的数值（0-100）
     onProgressChange(progress) {
       const percentage = progress / 100
-      const location = percentage > 0 ? this.locations.cfiFromPercentage(percentage) : 0
+      const location =
+        percentage > 0 ? this.locations.cfiFromPercentage(percentage) : 0
       this.rendition.display(location)
     },
     // 设置主题
-    setTheme(index) {
-      // console.log(index, this.themeList[index].name)
-      this.themes.select(this.themeList[index].name)
-      this.defaultTheme = index
+    // setTheme(index) {
+    //   // console.log(index, this.themeList[index].name)
+    //   this.themes.select(this.themeList[index].name)
+    //   this.defaultTheme = index
+    // },
+    // 设置主题,解决主题只能切换一次 https://github.com/futurepress/epub.js/issues/1101
+    setTheme(index){
+      const name = this.themeList[index].name
+      // this.book.rendition.themes.select(name)
+      const bodyObject = this.themeList[index].style.body
+      for(let key in bodyObject){
+        this.book.rendition.themes.override(key,bodyObject[key],true)
+      }
     },
     // 注册主题
     registerTheme() {
-      this.themeList.forEach(theme => {
+      this.themeList.forEach((theme) => {
         this.themes.register(theme.name, theme.style)
       })
     },
@@ -154,7 +176,7 @@ export default {
         width: window.innerWidth,
         height: window.innerHeight,
         // 兼容iOS
-        method: 'default'
+        method: 'default',
       })
       // 通过Rendtion.display渲染电子书
       this.rendition.display()
@@ -167,21 +189,23 @@ export default {
       // 设置默认主题
       this.setTheme(this.defaultTheme)
       // Book对象的钩子函数ready
-      this.book.ready.then(() => {
-        this.navigation = this.book.navigation
-        // 生成Locations对象
-        return this.book.locations.generate()
-      }).then(() => {
-        // 保存locations对象
-        this.locations = this.book.locations
-        // 标记电子书为解析完毕状态
-        this.bookAvailable = true
-      })
-    }
+      this.book.ready
+        .then(() => {
+          this.navigation = this.book.navigation
+          // 生成Locations对象
+          return this.book.locations.generate()
+        })
+        .then(() => {
+          // 保存locations对象
+          this.locations = this.book.locations
+          // 标记电子书为解析完毕状态
+          this.bookAvailable = true
+        })
+    },
   },
   mounted() {
     this.showEpub()
-  }
+  },
 }
 </script>
 
