@@ -30,7 +30,7 @@
 import TitleBar from '@/components/TitleBar'
 import MenuBar from '@/components/MenuBar'
 import Epub from 'epubjs'
-const DOWNLOAD_URL = '/static/人类简史.epub'
+const DOWNLOAD_URL = './static/renleijianshi.epub'
 export default {
   components: {
     TitleBar,
