@@ -1,7 +1,7 @@
 # ebook
 
 epub+vue 在线阅读电子书 [在线预览](https://afetmin.github.io/Ebook)
-
+[慕课网](https://www.imooc.com/learn/1038)
 10-6 修复了主题只能设置一次bug。
 
 ## Build Setup
